@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+.cache/
+compile_commands.json
+
+# Build Artifacts
+build/
+bin/
+obj/
+*.o
+*.a
+*.so
+*.dylib
+*.apk
+*.aab
+*.dex
+
+# Android Studio / Gradle
+.gradle/
+proj.android/.gradle/
+proj.android/app/build/
+proj.android/app/.cxx/
+proj.android/local.properties
+proj.android/.idea/
+proj.android/*.iml
+proj.android/app/*.iml
+captures/
+.externalNativeBuild/
+
+# Cocos2d-x Engine (linked externally or submodule)
+cocos2d
+
+# Temporary files
+*.swp
+*~
+*.log

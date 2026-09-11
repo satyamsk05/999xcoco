@@ -1,0 +1,16 @@
+CompileFlags:
+  Add:
+    - -std=c++17
+    - -I/Users/satyamkumar/Desktop/999xcoco/Classes
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/cocos
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/cocos/base
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/cocos/2d
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/cocos/ui
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/cocos/math
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/cocos/platform
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/cocos/network
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/cocos/audio/include
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/external
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/external/sources
+    - -I/Users/satyamkumar/Desktop/cocos2d-x-4.0/external/json
+    - -Wno-everything
