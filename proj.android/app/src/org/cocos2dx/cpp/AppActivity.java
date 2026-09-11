@@ -25,26 +25,44 @@ THE SOFTWARE.
 package org.cocos2dx.cpp;
 
 import android.os.Bundle;
-import org.cocos2dx.lib.Cocos2dxActivity;
 import android.os.Build;
 import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
+import android.util.Log;
+import org.cocos2dx.lib.Cocos2dxActivity;
 
 public class AppActivity extends Cocos2dxActivity {
+    private static final String TAG = "999xGame";
+
+    static {
+        try {
+            System.loadLibrary("MyGame");
+            Log.d(TAG, "Successfully loaded libMyGame.so");
+        } catch (Throwable t) {
+            Log.e(TAG, "Error loading libMyGame.so in static initializer: " + t.getMessage());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.setEnableVirtualButton(false);
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                Log.e(TAG, "FATAL UNCAUGHT EXCEPTION in thread: " + thread.getName(), throwable);
+            }
+        });
+
         super.onCreate(savedInstanceState);
-        
-        // Enable rendering into the cutout area for modern Android devices
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            WindowManager.LayoutParams lp = getWindow().getAttributes();
-            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-            getWindow().setAttributes(lp);
+
+        try {
+            setEnableVirtualButton(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                getWindow().setAttributes(lp);
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "Error configuring window flags: " + t.getMessage());
         }
-        // DO OTHER INITIALIZATION BELOW
-        
     }
 
     @Override
@@ -55,5 +73,4 @@ public class AppActivity extends Cocos2dxActivity {
             super.onLoadNativeLibraries();
         }
     }
-
 }

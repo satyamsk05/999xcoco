@@ -22,9 +22,17 @@ bool MainScene::init() {
     addChild(bg, 0);
 
     setupUI();
-    refreshData();
+    loadGamesList();
 
     return true;
+}
+
+void MainScene::onEnter() {
+    Scene::onEnter();
+    // Safely refresh server data on next frame after OpenGL view is fully active
+    scheduleOnce([this](float dt) {
+        refreshData();
+    }, 0.2f, "main_scene_data_refresh");
 }
 
 void MainScene::setupUI() {

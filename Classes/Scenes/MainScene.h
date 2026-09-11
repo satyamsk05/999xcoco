@@ -14,6 +14,7 @@ class MainScene : public cocos2d::Scene {
 public:
     static MainScene* createScene();
     virtual bool init() override;
+    virtual void onEnter() override;
 
     CREATE_FUNC(MainScene);
 
