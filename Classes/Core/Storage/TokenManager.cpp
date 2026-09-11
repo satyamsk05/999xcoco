@@ -14,9 +14,45 @@ const char* TokenManager::KEY_USER_NAME = "auth_user_name";
 const char* TokenManager::KEY_USER_PHONE = "auth_user_phone";
 const char* TokenManager::KEY_USER_AVATAR = "auth_user_avatar";
 
+static const std::string SALT_KEY = "999x_sEcUrE_tOkEn_sAlT_2026_!#%";
+
+static std::string encryptData(const std::string& input) {
+    if (input.empty()) return "";
+    std::string output = "";
+    output.reserve(input.length() * 2);
+    static const char hexChars[] = "0123456789ABCDEF";
+    for (size_t i = 0; i < input.length(); ++i) {
+        char masked = input[i] ^ SALT_KEY[i % SALT_KEY.length()];
+        output.push_back(hexChars[(masked >> 4) & 0x0F]);
+        output.push_back(hexChars[masked & 0x0F]);
+    }
+    return output;
+}
+
+static std::string decryptData(const std::string& hexInput) {
+    if (hexInput.empty() || hexInput.length() % 2 != 0) return "";
+    std::string output = "";
+    output.reserve(hexInput.length() / 2);
+    for (size_t i = 0; i < hexInput.length(); i += 2) {
+        char high = hexInput[i];
+        char low = hexInput[i + 1];
+        int hVal = (high >= '0' && high <= '9') ? (high - '0') : (high >= 'A' && high <= 'F' ? high - 'A' + 10 : high - 'a' + 10);
+        int lVal = (low >= '0' && low <= '9') ? (low - '0') : (low >= 'A' && low <= 'F' ? low - 'A' + 10 : low - 'a' + 10);
+        char masked = static_cast<char>((hVal << 4) | lVal);
+        size_t charIndex = i / 2;
+        output.push_back(masked ^ SALT_KEY[charIndex % SALT_KEY.length()]);
+    }
+    return output;
+}
+
 void TokenManager::init() {
     auto def = UserDefault::getInstance();
-    _cachedToken = def->getStringForKey(KEY_TOKEN, "");
+    std::string encToken = def->getStringForKey(KEY_TOKEN, "");
+    _cachedToken = decryptData(encToken);
+    if (_cachedToken.empty() && !encToken.empty()) {
+        // Fallback for unencrypted legacy format
+        _cachedToken = encToken;
+    }
     _cachedUserId = def->getStringForKey(KEY_USER_ID, "");
     _cachedUserName = def->getStringForKey(KEY_USER_NAME, "Player");
     _cachedUserPhone = def->getStringForKey(KEY_USER_PHONE, "");
@@ -71,7 +107,7 @@ void TokenManager::saveSession(const std::string& token,
     if (!avatar.empty()) _cachedUserAvatar = avatar;
 
     auto def = UserDefault::getInstance();
-    def->setStringForKey(KEY_TOKEN, _cachedToken);
+    def->setStringForKey(KEY_TOKEN, encryptData(_cachedToken));
     def->setStringForKey(KEY_USER_ID, _cachedUserId);
     def->setStringForKey(KEY_USER_NAME, _cachedUserName);
     def->setStringForKey(KEY_USER_PHONE, _cachedUserPhone);

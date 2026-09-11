@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-set(APP_NAME HelloCpp)
+set(APP_NAME MyGame)
 
 project(${APP_NAME})
 
@@ -8,7 +8,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(NOT DEFINED BUILD_ENGINE_DONE)
-    set(COCOS2DX_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d)
+    if(NOT DEFINED COCOS2DX_ROOT_PATH)
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/cocos2d.h")
+            set(COCOS2DX_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d)
+        elseif(EXISTS "$ENV{COCOS2DX_ROOT_PATH}")
+            set(COCOS2DX_ROOT_PATH $ENV{COCOS2DX_ROOT_PATH})
+        elseif(EXISTS "/Users/satyamkumar/Desktop/cocos2d-x-4.0")
+            set(COCOS2DX_ROOT_PATH "/Users/satyamkumar/Desktop/cocos2d-x-4.0")
+        else()
+            set(COCOS2DX_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d)
+        endif()
+    endif()
     set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 
     include(CocosBuildSet)
